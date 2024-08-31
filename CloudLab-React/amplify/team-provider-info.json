@@ -1,0 +1,25 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cloudlabreact-dev-513c6-authRole",
+      "UnauthRoleArn": "arn:aws:iam::307946676454:role/amplify-cloudlabreact-dev-513c6-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::307946676454:role/amplify-cloudlabreact-dev-513c6-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-cloudlabreact-dev-513c6-deployment",
+      "UnauthRoleName": "amplify-cloudlabreact-dev-513c6-unauthRole",
+      "StackName": "amplify-cloudlabreact-dev-513c6",
+      "StackId": "arn:aws:cloudformation:us-east-1:307946676454:stack/amplify-cloudlabreact-dev-513c6/5a0f0ba0-67e2-11ef-be7c-0affcb4ce935",
+      "AmplifyAppId": "d3kjnhp84kjczu"
+    },
+    "categories": {
+      "auth": {
+        "cloudlabreactee5c92e5": {
+          "userPoolId": "us-east-1_Ma63jmSze",
+          "userPoolName": "CloudLabAuthPool",
+          "webClientId": "7ji2mgjgsju4t33kutd5m4e7l6",
+          "nativeClientId": "7ji2mgjgsju4t33kutd5m4e7l6"
+        }
+      }
+    }
+  }
+}
