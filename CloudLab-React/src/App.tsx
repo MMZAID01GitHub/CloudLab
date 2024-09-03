@@ -1,13 +1,11 @@
 import './App.css';
-
 import { Amplify } from 'aws-amplify';
 import { withAuthenticator, AuthenticatorProps } from '@aws-amplify/ui-react';
 import awsconfig from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useEffect, useState } from 'react';
-
-
+import ExperimentForm from './ExperimentForm'; // Import the ExperimentForm component
 
 // Configure Amplify
 Amplify.configure(awsconfig);
@@ -39,6 +37,7 @@ function App({ signOut }: AppProps) {
     <div>
       <h1>Welcome, {username ? username : 'Loading...'}</h1>
       <button onClick={signOut}>Sign out</button>
+      {username && <ExperimentForm />} {/* Conditionally render the ExperimentForm component */}
     </div>
   );
 }
