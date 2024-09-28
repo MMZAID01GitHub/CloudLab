@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import React, { useState } from 'react';
+import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, MenuItem, Grid2, SelectChangeEvent } from '@mui/material';
 import VariableList from './VariableList';
 
 const ExperimentForm = () => {
@@ -11,6 +11,7 @@ const ExperimentForm = () => {
         setVariables([...variables, { name: '', min: '', max: '', type: 'continuous', customValues: [] }]);
     };
 
+    
     const handleGoalChange = (event: SelectChangeEvent<string>) => {
         setGoal(event.target.value as string);
     };
@@ -27,29 +28,47 @@ const ExperimentForm = () => {
             <Typography variant="h4" gutterBottom>
                 Create New Experiment
             </Typography>
-            <TextField
-                label="Experiment Name"
-                value={experimentName}
-                onChange={(e) => setExperimentName(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            <FormControl fullWidth margin="normal">
-                <InputLabel>Goal</InputLabel>
-                <Select value={goal} onChange={handleGoalChange}>
-                    <MenuItem value="minimize">Minimize</MenuItem>
-                    <MenuItem value="maximize">Maximize</MenuItem>
-                </Select>
-            </FormControl>
 
+            {/* Experiment Name Field */}
+            <Grid2 container spacing={2} sx={{ mb: 2 }}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="Experiment Name"
+                        value={experimentName}
+                        onChange={(e) => setExperimentName(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                </Grid2>
+
+                {/* Goal Dropdown */}
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Goal</InputLabel>
+                        <Select value={goal} onChange={handleGoalChange}>
+                            <MenuItem value="minimize">Minimize</MenuItem>
+                            <MenuItem value="maximize">Maximize</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid2>
+            </Grid2>
+
+            {/* Variable List */}
             <VariableList variables={variables} setVariables={setVariables} />
 
-            <Button variant="contained" color="primary" onClick={addVariable} sx={{ mt: 2 }}>
-                Add Variable
-            </Button>
-            <Button variant="contained" color="secondary" onClick={handleSubmit} sx={{ mt: 2, ml: 2 }}>
-                Save Experiment
-            </Button>
+            {/* Buttons */}
+            <Grid2 container spacing={2} sx={{ mt: 2 }}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Button variant="contained" color="primary" fullWidth onClick={addVariable}>
+                        Add Variable
+                    </Button>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Button variant="contained" color="secondary" fullWidth onClick={handleSubmit}>
+                        Save Experiment
+                    </Button>
+                </Grid2>
+            </Grid2>
         </Box>
     );
 };
