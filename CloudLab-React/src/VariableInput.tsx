@@ -19,7 +19,7 @@ const VariableInput: React.FC<VariableInputProps> = ({ index, variable, updateVa
     };
 
     return (
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, p: 2, border: '1px solid #ddd', borderRadius: '4px' }}>
             <TextField
                 label="Variable Name"
                 name="name"
@@ -27,6 +27,7 @@ const VariableInput: React.FC<VariableInputProps> = ({ index, variable, updateVa
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#fff' }}  {/* Background set to white */}
             />
             <TextField
                 label="Min Value"
@@ -36,6 +37,7 @@ const VariableInput: React.FC<VariableInputProps> = ({ index, variable, updateVa
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#fff' }}  {/* Background set to white */}
             />
             <TextField
                 label="Max Value"
@@ -45,13 +47,15 @@ const VariableInput: React.FC<VariableInputProps> = ({ index, variable, updateVa
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#fff' }}  {/* Background set to white */}
             />
             <FormControl fullWidth margin="normal">
-                <InputLabel>Type</InputLabel>
+                <InputLabel sx={{ fontFamily: 'Poppins, sans-serif' }}>Type</InputLabel>
                 <Select
                     name="type"
                     value={variable.type}
                     onChange={handleSelectChange}
+                    sx={{ backgroundColor: '#fff' }}  {/* Background set to white */}
                 >
                     <MenuItem value="continuous">Continuous</MenuItem>
                     <MenuItem value="discrete">Discrete</MenuItem>
@@ -65,6 +69,7 @@ const VariableInput: React.FC<VariableInputProps> = ({ index, variable, updateVa
                     onChange={handleInputChange}
                     fullWidth
                     margin="normal"
+                    sx={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#fff' }}  {/* Background set to white */}
                 />
             )}
         </Box>

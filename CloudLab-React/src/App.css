@@ -1,42 +1,76 @@
+/* Reset margin and padding for the entire page */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* General Styling for the App */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: url('./assets/background.jpg') no-repeat center center fixed;
+  background-size: cover; /* Ensures the image covers the entire background */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Main content should be centered */
+.app-container {
+  position: relative;
+  z-index: 2;
+  padding: 2rem; /* Optional, adjust padding if you need some space around the content */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Position the sign-out button in the top-right corner */
+.sign-out-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ff6b6b;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.sign-out-button:hover {
+  background-color: #ff4c4c;
 }
 
-.card {
-  padding: 2em;
+/* Header styling for welcome message and tagline */
+.header {
+  position: relative;
+  padding-top: 1rem;
 }
 
-.read-the-docs {
-  color: #888;
+.welcome-message {
+  font-size: 2rem;
+  color: #fff; /* Set to white or any contrasting color for readability */
+  margin: 0.5rem 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.tagline {
+  font-size: 1.25rem;
+  color: #eee; /* Light text color to match the background */
+  margin-bottom: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Main content area */
+.main-content {
+  margin-top: 2rem;
+}
+
+/* Responsive fix for mobile screens */
+@media (max-width: 768px) {
+  /* Adjustments for mobile */
 }

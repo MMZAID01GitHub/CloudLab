@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, TextField, Grid2, Button, IconButton } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, TextField, Grid2, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -33,9 +33,11 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
     return (
         <>
             {variables.map((variable, index) => (
-                <Accordion key={index}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>Variable {index + 1}: {variable.name || 'Unnamed'}</Typography>
+                <Accordion key={index} sx={{ mb: 2, borderRadius: '4px', border: '1px solid #e0e0e0' }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                        <Typography variant="subtitle1" sx={{ color: '#333' }}>
+                            Variable {index + 1}: {variable.name || 'Unnamed'}
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid2 container spacing={2}>
@@ -45,6 +47,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.name}
                                     onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                                     fullWidth
+                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -53,6 +56,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.min}
                                     onChange={(e) => handleInputChange(index, 'min', e.target.value)}
                                     fullWidth
+                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -61,6 +65,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.max}
                                     onChange={(e) => handleInputChange(index, 'max', e.target.value)}
                                     fullWidth
+                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -69,9 +74,9 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.type}
                                     onChange={(e) => handleInputChange(index, 'type', e.target.value)}
                                     fullWidth
+                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
                                 />
                             </Grid2>
-                            {/* Custom values or other inputs can be added here */}
                             <Grid2 size={12}>
                                 <IconButton onClick={() => handleDeleteVariable(index)} color="secondary">
                                     <DeleteIcon />

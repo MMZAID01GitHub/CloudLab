@@ -5,24 +5,24 @@ import awsconfig from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useEffect, useState } from 'react';
-import ExperimentForm from './ExperimentForm'; // Import the ExperimentForm component
+import ExperimentForm from './ExperimentForm';
 
-// Configure Amplify
 Amplify.configure(awsconfig);
 
 interface AppProps extends AuthenticatorProps {
-  signOut: () => void;
+  signOut?: () => void;
 }
 
 function App({ signOut }: AppProps) {
   const [username, setUsername] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [experimentName, setExperimentName] = useState('');
 
   useEffect(() => {
     async function fetchUser() {
       try {
         const user = await getCurrentUser();
         if (user && user.signInDetails?.loginId) {
-          // Extract part before @
           const emailPart = user.signInDetails.loginId.split('@')[0];
           setUsername(emailPart);
         }
@@ -33,11 +33,35 @@ function App({ signOut }: AppProps) {
     fetchUser();
   }, []);
 
+  const handleStartNewExperiment = () => {
+    setShowForm(true);
+  };
+
+  const handleExperimentNameChange = (name: string) => {
+    setExperimentName(name);
+  };
+
   return (
-    <div>
-      <h1>Welcome, {username ? username : 'Loading...'}</h1>
-      <button onClick={signOut}>Sign out</button>
-      {username && <ExperimentForm />} {/* Conditionally render the ExperimentForm component */}
+    <div className="app-container">
+      <header className="header">
+        <h1 className="welcome-message">
+          Welcome to CloudLab{username ? `, ${username}!` : '!'}
+        </h1>
+        <p className="tagline">Optimize and streamline your experiments with ease</p>
+        <button className="sign-out-button" onClick={() => signOut && signOut()}>
+          Sign out
+        </button>
+      </header>
+      <main className="main-content">
+        {username && (
+          <ExperimentForm
+            showForm={showForm}
+            onStartNewExperiment={handleStartNewExperiment}
+            experimentName={experimentName}
+            onExperimentNameChange={handleExperimentNameChange}
+          />
+        )}
+      </main>
     </div>
   );
 }
