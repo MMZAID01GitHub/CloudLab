@@ -34,7 +34,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
         <>
             {variables.map((variable, index) => (
                 <Accordion key={index} sx={{ mb: 2, borderRadius: '4px', border: '1px solid #e0e0e0' }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                         <Typography variant="subtitle1" sx={{ color: '#333' }}>
                             Variable {index + 1}: {variable.name || 'Unnamed'}
                         </Typography>
@@ -47,7 +47,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.name}
                                     onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                                     fullWidth
-                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
+                                    sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -56,7 +56,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.min}
                                     onChange={(e) => handleInputChange(index, 'min', e.target.value)}
                                     fullWidth
-                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
+                                    sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -65,7 +65,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.max}
                                     onChange={(e) => handleInputChange(index, 'max', e.target.value)}
                                     fullWidth
-                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
+                                    sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={{ xs: 12, sm: 4 }}>
@@ -74,7 +74,7 @@ const VariableList: React.FC<VariableListProps> = ({ variables, setVariables }) 
                                     value={variable.type}
                                     onChange={(e) => handleInputChange(index, 'type', e.target.value)}
                                     fullWidth
-                                    sx={{ fontFamily: 'Poppins, sans-serif' }}
+                                    sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
                                 />
                             </Grid2>
                             <Grid2 size={12}>

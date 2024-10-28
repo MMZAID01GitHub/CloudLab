@@ -1,8 +1,12 @@
+/* Import the Plus Jakarta Sans font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 /* Reset margin and padding for the entire page */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif; /* Apply Plus Jakarta Sans globally */
 }
 
 /* General Styling for the App */
@@ -14,8 +18,7 @@ html, body {
   text-align: center;
   position: relative;
   overflow: hidden;
-  background: url('./assets/background.jpg') no-repeat center center fixed;
-  background-size: cover; /* Ensures the image covers the entire background */
+  background: linear-gradient(to bottom, #fff, #ff6b6b); /* Blue to white gradient */
 }
 
 /* Main content should be centered */
@@ -38,7 +41,7 @@ html, body {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s ease;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif; /* Ensure the button text also uses the font */
 }
 
 .sign-out-button:hover {
@@ -53,16 +56,16 @@ html, body {
 
 .welcome-message {
   font-size: 2rem;
-  color: #fff; /* Set to white or any contrasting color for readability */
+  color: #5b577f;
   margin: 0.5rem 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .tagline {
   font-size: 1.25rem;
-  color: #eee; /* Light text color to match the background */
+  color: #5b577f;
   margin-bottom: 1.5rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* Main content area */
