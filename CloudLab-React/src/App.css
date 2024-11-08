@@ -6,7 +6,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Plus Jakarta Sans', sans-serif; /* Apply Plus Jakarta Sans globally */
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow: auto; /* Enable scrolling for overflowing content */
 }
 
 /* General Styling for the App */
@@ -18,14 +19,16 @@ html, body {
   text-align: center;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(to bottom, #fff, #ff6b6b); /* Blue to white gradient */
+  background: linear-gradient(to bottom, #fff, #ff6b6b);
 }
 
 /* Main content should be centered */
 .app-container {
   position: relative;
   z-index: 2;
-  padding: 2rem; /* Optional, adjust padding if you need some space around the content */
+  padding: 2rem;
+  max-height: 100vh; /* Ensure it fits within the viewport */
+  overflow-y: auto; /* Enable vertical scrolling for content overflow */
 }
 
 /* Position the sign-out button in the top-right corner */
@@ -41,7 +44,7 @@ html, body {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s ease;
-  font-family: 'Plus Jakarta Sans', sans-serif; /* Ensure the button text also uses the font */
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .sign-out-button:hover {
@@ -71,9 +74,14 @@ html, body {
 /* Main content area */
 .main-content {
   margin-top: 2rem;
+  overflow-y: auto; /* Enable scrolling within main content */
+  max-height: calc(100vh - 100px); /* Adjust max-height to prevent overflow beyond viewport */
 }
 
 /* Responsive fix for mobile screens */
 @media (max-width: 768px) {
   /* Adjustments for mobile */
+  .app-container {
+    padding: 1rem;
+  }
 }

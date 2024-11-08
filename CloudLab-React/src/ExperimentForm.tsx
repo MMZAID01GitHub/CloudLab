@@ -3,18 +3,15 @@ import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, Me
 import VariableList from './VariableList';
 import { getCurrentUser } from 'aws-amplify/auth';
 
-
 interface ExperimentFormProps {
-  showForm: boolean;
-  onStartNewExperiment: () => void;
   experimentName: string;
   onExperimentNameChange: (name: string) => void;
 }
 
-const ExperimentForm: React.FC<ExperimentFormProps> = ({ showForm, onStartNewExperiment, experimentName, onExperimentNameChange }) => {
+const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExperimentNameChange }) => {
     const [variables, setVariables] = useState<any[]>([]);
     const [goal, setGoal] = useState('minimize');
-    const [populationSize, setPopulationSize] = useState<number>(10); // default population size
+    const [populationSize, setPopulationSize] = useState<number>(10);
 
     const addVariable = () => {
         setVariables([...variables, { name: '', min: '', max: '', type: 'continuous', customValues: [] }]);
@@ -26,22 +23,17 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ showForm, onStartNewExp
 
     const handleSubmit = async () => {
         try {
-            // Get the current authenticated user's information
-            const currentUser = await getCurrentUser(); // This retrieves the current user
-            
-            // Ensure you extract the userId correctly
-            const userId = currentUser.userId; // Adjust based on the actual structure returned
-            
-            // Prepare the experiment data
+            const currentUser = await getCurrentUser();
+            const userId = currentUser.userId; 
+
             const experimentData = {
-                userId: userId, // Use the userId from getCurrentUser
+                userId: userId,
                 experimentName: experimentName,
                 variables: variables,
                 goal: goal,
                 populationSize: populationSize
             };
-    
-            // Make the API request to save the experiment
+
             const response = await fetch('https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments', {
                 method: 'POST',
                 headers: {
@@ -49,27 +41,13 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ showForm, onStartNewExp
                 },
                 body: JSON.stringify(experimentData),
             });
-    
+
             const result = await response.json();
             console.log('Experiment saved:', result);
         } catch (error) {
             console.error('Error saving experiment:', error);
         }
     };
-    
-
-    if (!showForm) {
-      return (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onStartNewExperiment}
-          sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif', padding: '0.75rem 1.5rem' }}
-        >
-          Create New Experiment
-        </Button>
-      );
-    }
 
     return (
         <Box sx={{ p: 3 }}>
@@ -95,7 +73,6 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ showForm, onStartNewExp
                         <Select
                           value={goal}
                           onChange={handleGoalChange}
-                          sx={{ }} 
                         >
                             <MenuItem value="minimize">Minimize</MenuItem>
                             <MenuItem value="maximize">Maximize</MenuItem>

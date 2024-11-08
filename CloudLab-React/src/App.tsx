@@ -6,6 +6,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useEffect, useState } from 'react';
 import ExperimentForm from './ExperimentForm';
+import ExperimentList from './ExperimentList';
 
 Amplify.configure(awsconfig);
 
@@ -15,7 +16,7 @@ interface AppProps extends AuthenticatorProps {
 
 function App({ signOut }: AppProps) {
   const [username, setUsername] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [viewMode, setViewMode] = useState<'form' | 'list' | null>(null);
   const [experimentName, setExperimentName] = useState('');
 
   useEffect(() => {
@@ -34,7 +35,11 @@ function App({ signOut }: AppProps) {
   }, []);
 
   const handleStartNewExperiment = () => {
-    setShowForm(true);
+    setViewMode('form');
+  };
+
+  const handleViewExperiments = () => {
+    setViewMode('list');
   };
 
   const handleExperimentNameChange = (name: string) => {
@@ -54,12 +59,29 @@ function App({ signOut }: AppProps) {
       </header>
       <main className="main-content">
         {username && (
-          <ExperimentForm
-            showForm={showForm}
-            onStartNewExperiment={handleStartNewExperiment}
-            experimentName={experimentName}
-            onExperimentNameChange={handleExperimentNameChange}
-          />
+          viewMode === null ? (
+            <>
+              <button
+                className="create-experiment-button"
+                onClick={handleStartNewExperiment}
+              >
+                Create New Experiment
+              </button>
+              <button
+                className="view-experiments-button"
+                onClick={handleViewExperiments}
+              >
+                View My Experiments
+              </button>
+            </>
+          ) : viewMode === 'form' ? (
+            <ExperimentForm
+              experimentName={experimentName}
+              onExperimentNameChange={handleExperimentNameChange}
+            />
+          ) : (
+            <ExperimentList />
+          )
         )}
       </main>
     </div>
