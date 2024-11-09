@@ -185,22 +185,26 @@ const ExperimentList: React.FC = () => {
               <strong>Variables:</strong>
             </Typography>
             {experiment.variables.map((variable, i) => (
-              <Box key={i} sx={{ p: 1, mb: 1, border: '1px solid #ddd', borderRadius: '4px' }}>
-                <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                  <strong>Name:</strong> {variable.name}
-                </Typography>
-                <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                  <strong>Type:</strong> {variable.type}
-                </Typography>
-                <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                  <strong>Min:</strong> {variable.min} | <strong>Max:</strong> {variable.max}
-                </Typography>
-                {variable.type === 'discrete' && variable.customValues && (
+              <Accordion key={i} sx={{ mb: 1, borderRadius: '4px', border: '1px solid #ddd' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                   <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                    <strong>Custom Values:</strong> {variable.customValues.join(', ')}
+                    {variable.name}
                   </Typography>
-                )}
-              </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                    <strong>Type:</strong> {variable.type}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                    <strong>Min:</strong> {variable.min} | <strong>Max:</strong> {variable.max}
+                  </Typography>
+                  {variable.type === 'discrete' && variable.customValues && (
+                    <Typography variant="body2" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                      <strong>Custom Values:</strong> {variable.customValues.join(', ')}
+                    </Typography>
+                  )}
+                </AccordionDetails>
+              </Accordion>
             ))}
           </AccordionDetails>
         </Accordion>
