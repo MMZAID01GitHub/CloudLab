@@ -98,14 +98,26 @@ function App({ signOut }: AppProps) {
               </Box>
             ) : (
               <>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleGoHome}
-                  sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-                >
-                  Back to Home
-                </Button>
+                <Box sx={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleGoHome}
+                    sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                  >
+                    Back to Home
+                  </Button>
+                  {viewMode === 'form' && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleViewExperiments}
+                      sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                    >
+                      View My Experiments
+                    </Button>
+                  )}
+                </Box>
                 {viewMode === 'form' ? (
                   <ExperimentForm
                     experimentName={experimentName}
