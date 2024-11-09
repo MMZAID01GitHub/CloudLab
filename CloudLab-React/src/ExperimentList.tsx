@@ -5,9 +5,18 @@ import {
   AccordionDetails,
   Typography,
   Box,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Snackbar,
+  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { getCurrentUser } from 'aws-amplify/auth';
+import Grid2 from '@mui/material/Grid2'; // Import Grid2
 
 interface Variable {
   name: string;
@@ -30,17 +39,21 @@ const ExperimentList: React.FC = () => {
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>(''); // Snackbar message
 
   useEffect(() => {
     const fetchExperiments = async () => {
       setLoading(true);
       setError(null);
       console.log('Fetching experiments...');
-    
+
       try {
         const currentUser = await getCurrentUser();
         const userId = currentUser.userId; // Adjust if 'sub' is not the correct field
-    
+
         const response = await fetch(`https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments?userId=${userId}`, {
           method: 'GET',
           headers: {
@@ -48,18 +61,18 @@ const ExperimentList: React.FC = () => {
           },
           mode: 'cors',
         });
-    
+
         if (!response.ok) {
           throw new Error('Failed to fetch experiments');
         }
-    
+
         const data = await response.json();
         console.log("data", data);
 
         // Parse the 'body' field to get the actual data
         const parsedBody = JSON.parse(data.body); // Parse the body string to a JSON object
         console.log('Parsed body:', parsedBody);
-    
+
         // Ensure experiments data is well-formed
         const experiments = Array.isArray(parsedBody.experiments) ? parsedBody.experiments.map((experiment: Partial<Experiment>) => ({
           experimentName: experiment.experimentName || 'Unnamed Experiment',
@@ -81,6 +94,48 @@ const ExperimentList: React.FC = () => {
 
     fetchExperiments();
   }, []);
+
+  const handleDeleteClick = (experiment: Experiment) => {
+    setSelectedExperiment(experiment);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedExperiment) {
+      try {
+        const response = await fetch(`https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments?experimentId=${selectedExperiment.experimentId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        });
+
+        if (response.ok) {
+          // Remove the deleted experiment from the list
+          setExperiments(prevExperiments => prevExperiments.filter(exp => exp.experimentId !== selectedExperiment.experimentId));
+          setSnackbarMessage('Experiment deleted successfully');
+          setSnackbarOpen(true);
+        } else {
+          throw new Error('Failed to delete experiment');
+        }
+      } catch (error) {
+        console.error('Error deleting experiment:', error);
+        setSnackbarMessage('Failed to delete experiment');
+        setSnackbarOpen(true);
+      } finally {
+        setDeleteDialogOpen(false);
+      }
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   if (loading) {
     return <Typography>Loading experiments...</Typography>;
@@ -105,15 +160,28 @@ const ExperimentList: React.FC = () => {
             <Typography variant="subtitle1" sx={{ color: '#333' }}>
               {experiment.experimentName}
             </Typography>
+            <IconButton
+              onClick={() => handleDeleteClick(experiment)}
+              sx={{ marginLeft: 'auto', color: 'red' }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body1" sx={{ mb: 1, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              <strong>Goal:</strong> {experiment.goal}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              <strong>Population Size:</strong> {experiment.populationSize}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <Grid2 container spacing={2} sx={{ mb: 1 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <Typography variant="body1" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                  <strong>Goal:</strong> {experiment.goal}
+                </Typography>
+              </Grid2>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <Typography variant="body1" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                  <strong>Population Size:</strong> {experiment.populationSize}
+                </Typography>
+              </Grid2>
+            </Grid2>
+
+            <Typography variant="body1" sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif', mt: 1 }}>
               <strong>Variables:</strong>
             </Typography>
             {experiment.variables.map((variable, i) => (
@@ -137,6 +205,30 @@ const ExperimentList: React.FC = () => {
           </AccordionDetails>
         </Accordion>
       ))}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this experiment? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for success or failure */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </Box>
   );
 };
