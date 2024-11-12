@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import ExperimentForm from './ExperimentForm';
 import ExperimentList from './ExperimentList';
 import MarketingPage from './MarketingPage';
+import OngoingExperiment from './OngoingExperiment'; // Import the new OngoingExperiment component
 
 Amplify.configure(awsconfig);
 
@@ -128,6 +129,23 @@ function App({ signOut }: AppProps) {
                       Back to Home
                     </Button>
                     <ExperimentList />
+                  </>
+                }
+              />
+              <Route
+                path="/ongoing-experiment/:experimentId"
+                element={
+                  <>
+                    <Button
+                      component={Link}
+                      to="/experiments"
+                      variant="contained"
+                      color="primary"
+                      sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                    >
+                      Back to Experiments
+                    </Button>
+                    <OngoingExperiment />
                   </>
                 }
               />

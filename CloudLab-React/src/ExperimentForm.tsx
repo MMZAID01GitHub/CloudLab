@@ -36,7 +36,8 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
         experimentName: experimentName,
         variables: variables,
         goal: goal,
-        populationSize: populationSize
+        populationSize: populationSize,
+        population: []
       };
 
       const response = await fetch('https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments', {

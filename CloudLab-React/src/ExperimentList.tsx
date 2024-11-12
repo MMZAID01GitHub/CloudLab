@@ -17,6 +17,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getCurrentUser } from 'aws-amplify/auth';
 import Grid2 from '@mui/material/Grid2'; // Import Grid2
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; // Icon for continue button
 
 interface Variable {
   name: string;
@@ -43,6 +45,7 @@ const ExperimentList: React.FC = () => {
   const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>(''); // Snackbar message
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   useEffect(() => {
     const fetchExperiments = async () => {
@@ -69,11 +72,9 @@ const ExperimentList: React.FC = () => {
         const data = await response.json();
         console.log("data", data);
 
-        // Parse the 'body' field to get the actual data
-        const parsedBody = JSON.parse(data.body); // Parse the body string to a JSON object
+        const parsedBody = JSON.parse(data.body);
         console.log('Parsed body:', parsedBody);
 
-        // Ensure experiments data is well-formed
         const experiments = Array.isArray(parsedBody.experiments) ? parsedBody.experiments.map((experiment: Partial<Experiment>) => ({
           experimentName: experiment.experimentName || 'Unnamed Experiment',
           goal: experiment.goal || 'No goal specified',
@@ -112,7 +113,6 @@ const ExperimentList: React.FC = () => {
         });
 
         if (response.ok) {
-          // Remove the deleted experiment from the list
           setExperiments(prevExperiments => prevExperiments.filter(exp => exp.experimentId !== selectedExperiment.experimentId));
           setSnackbarMessage('Experiment deleted successfully');
           setSnackbarOpen(true);
@@ -135,6 +135,11 @@ const ExperimentList: React.FC = () => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+  };
+
+  // Handle navigation to OngoingExperiment.tsx
+  const handleContinueExperiment = (experimentId: string) => {
+    navigate(`/ongoing-experiment/${experimentId}`);
   };
 
   if (loading) {
@@ -165,6 +170,13 @@ const ExperimentList: React.FC = () => {
               sx={{ marginLeft: 'auto', color: 'red' }}
             >
               <DeleteIcon />
+            </IconButton>
+            {/* Add Continue Experiment button */}
+            <IconButton
+              onClick={() => handleContinueExperiment(experiment.experimentId)}
+              sx={{ marginLeft: '16px', color: '#4caf50' }}
+            >
+              <ArrowForwardIcon /> {/* Icon for continue */}
             </IconButton>
           </AccordionSummary>
           <AccordionDetails>
@@ -214,22 +226,22 @@ const ExperimentList: React.FC = () => {
       <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this experiment? This action cannot be undone.</Typography>
+          <Typography>Are you sure you want to delete this experiment?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDeleteConfirm} color="error">
+          <Button onClick={handleDeleteConfirm} color="secondary">
             Delete
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for success or failure */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={handleSnackbarClose}
         message={snackbarMessage}
       />
