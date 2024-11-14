@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Button from '@mui/material/Button'; // MUI Button import
-import { CircularProgress } from '@mui/material'; // If needed for loading state
+import { Button, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography, TextField } from '@mui/material';
 
 // Define types for the experiment data structure
 interface Variable {
   name: string;
-  min: string;
-  max: string;
-  type: string;
-  customValues: string[];
-}
-
-interface PopulationMember {
-  variables: Variable[];
-  fitnessScore?: number;
 }
 
 interface Experiment {
@@ -24,7 +14,8 @@ interface Experiment {
   variables: Variable[];
   experimentId: string;
   userId: string;
-  population?: PopulationMember[]; // population is optional
+  population?: number[][]; // Population is now a 2D array of numbers (as per your description)
+  fitnessScores?: number[]; // New state for fitness scores
 }
 
 const OngoingExperiment: React.FC = () => {
@@ -58,7 +49,13 @@ const OngoingExperiment: React.FC = () => {
         const experiment: Experiment = parsedBody.experiment;
         console.log('Experiment data:', experiment);
 
-        setExperimentData(experiment);
+        // Initialize fitness scores array with '0' for each member if it doesn't exist
+        const initialFitnessScores = experiment.population?.map(() => 0) || [];
+
+        setExperimentData({
+          ...experiment,
+          fitnessScores: initialFitnessScores,
+        });
       } else {
         console.error('Invalid response structure:', parsedBody);
       }
@@ -81,35 +78,22 @@ const OngoingExperiment: React.FC = () => {
           mode: 'cors',
         }
       );
-  
+
       if (!response.ok) {
         throw new Error('Failed to generate next generation');
       }
-  
+
       const responseData = await response.json();
       const updatedExperiment = JSON.parse(responseData.body);
       console.log("Updated Experiment:", updatedExperiment.population);
-  
+
       if (updatedExperiment) {
-        // Transform the population data
-        const transformedPopulation = updatedExperiment.population.map((member: any[]) => {
-          return {
-            variables: member.map((value, index) => ({
-              name: `Variable ${index + 1}`, // Customize names as needed
-              min: value.toString(),
-              max: value.toString(),
-              type: 'numeric', // or another type if applicable
-              customValues: [], // Define this if applicable
-            })),
-            fitnessScore: null, // You can set this if applicable
-          };
-        });
-  
+        // Assuming the response contains a new population
         const experiment: Experiment = {
-          ...updatedExperiment.experiment,
-          population: transformedPopulation, // Add the transformed population
+          ...experimentData!,
+          population: updatedExperiment.population,
         };
-  
+
         setExperimentData(experiment); // Update the experiment data with the new population
         console.log('New population generated:', experiment.population);
       }
@@ -119,7 +103,14 @@ const OngoingExperiment: React.FC = () => {
       setLoading(false); // Stop loading
     }
   };
-  
+
+  // Function to handle fitness score change
+  const handleFitnessScoreChange = (e: React.ChangeEvent<HTMLInputElement>, memberIndex: number) => {
+    const updatedScores = [...(experimentData?.fitnessScores || [])];
+    updatedScores[memberIndex] = parseFloat(e.target.value);
+    setExperimentData({ ...experimentData!, fitnessScores: updatedScores });
+  };
+
   useEffect(() => {
     if (experimentId) {
       fetchExperimentData();
@@ -131,10 +122,16 @@ const OngoingExperiment: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Ongoing Experiment: {experimentData.experimentName}</h1>
-      <div>Goal: {experimentData.goal}</div>
-      <div>Population Size: {experimentData.populationSize}</div>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Ongoing Experiment: {experimentData.experimentName}
+      </Typography>
+      <Typography variant="h6" color="textSecondary">
+        Goal: {experimentData.goal}
+      </Typography>
+      <Typography variant="h6" color="textSecondary">
+        Population Size: {experimentData.populationSize}
+      </Typography>
 
       {/* MUI Button with consistent styling */}
       <Button
@@ -142,46 +139,57 @@ const OngoingExperiment: React.FC = () => {
         color="primary"
         onClick={generateNextGeneration}
         disabled={loading} // Disable while loading
+        sx={{ margin: '16px 0' }}
       >
         {loading ? <CircularProgress size={24} /> : 'Generate Next Generation'}
       </Button>
 
-    {/* Show population table if there are members in the population */}
-    {experimentData.population && experimentData.population.length > 0 ? (
-      <>
-        <h2>Population Table</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Variable Name</th>
-              <th>Min</th>
-              <th>Max</th>
-              <th>Type</th>
-              <th>Fitness Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {experimentData.population.map((member, index) => (
-              <tr key={index}>
-                {member.variables.map((variable, varIndex) => (
-                  <React.Fragment key={varIndex}>
-                    <td>{variable.name}</td>
-                    <td>{variable.min}</td>
-                    <td>{variable.max}</td>
-                    <td>{variable.type}</td>
-                  </React.Fragment>
+      {/* Show population table if there are members in the population */}
+      {experimentData.population && experimentData.population.length > 0 ? (
+        <>
+          <Typography variant="h5" gutterBottom>
+            Population Table
+          </Typography>
+          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                <TableRow>
+                  {experimentData.variables.map((variable, index) => (
+                    <TableCell key={index} sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+                      {variable.name}
+                    </TableCell>
+                  ))}
+                  <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Fitness Score</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {experimentData.population.map((member, memberIndex) => (
+                  <TableRow key={memberIndex} hover>
+                    {member.map((value, varIndex) => (
+                      <TableCell key={varIndex} align="center">
+                        {value}
+                      </TableCell>
+                    ))}
+                    <TableCell align="center">
+                      <TextField
+                        type="number"
+                        value={experimentData.fitnessScores?.[memberIndex] || ''}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFitnessScoreChange(e, memberIndex)} // Explicitly typing the event
+                        size="small"
+                        variant="outlined"
+                        sx={{ width: '70px' }}
+                      />
+                    </TableCell>
+                  </TableRow>
                 ))}
-                <td>{member.fitnessScore || 'N/A'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </>
-    ) : (
-      <div>No population generated yet.</div>
-    )}
-
-    </div>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ) : (
+        <div>No population generated yet.</div>
+      )}
+    </Box>
   );
 };
 
