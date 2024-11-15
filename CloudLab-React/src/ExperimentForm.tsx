@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, MenuItem, Grid2, SelectChangeEvent, Snackbar, Alert } from '@mui/material';
-import VariableList from './VariableList';
+import Variables from './Variables';
 import { getCurrentUser } from 'aws-amplify/auth';
 
 interface ExperimentFormProps {
@@ -108,7 +108,7 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
         </Grid2>
       </Grid2>
 
-      <VariableList variables={variables} setVariables={setVariables} />
+      <Variables variables={variables} setVariables={setVariables} />
 
       <Grid2 container spacing={2} sx={{ mt: 2 }}>
         <Grid2 size={{ xs: 12, sm: 6 }}>

@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography, TextField } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  TextField,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 
 // Define types for the experiment data structure
 interface Variable {
@@ -22,6 +37,11 @@ const OngoingExperiment: React.FC = () => {
   const { experimentId } = useParams<{ experimentId: string }>(); // Get experimentId from route params
   const [experimentData, setExperimentData] = useState<Experiment | null>(null);
   const [loading, setLoading] = useState(false); // For tracking loading state of the button
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   // Function to fetch experiment data
   const fetchExperimentData = async () => {
@@ -49,13 +69,8 @@ const OngoingExperiment: React.FC = () => {
         const experiment: Experiment = parsedBody.experiment;
         console.log('Experiment data:', experiment);
 
-        // Initialize fitness scores array with '0' for each member if it doesn't exist
         const initialFitnessScores = experiment.population?.map(() => 0) || [];
-
-        setExperimentData({
-          ...experiment,
-          fitnessScores: initialFitnessScores,
-        });
+        setExperimentData({ ...experiment, fitnessScores: initialFitnessScores });
       } else {
         console.error('Invalid response structure:', parsedBody);
       }
@@ -67,6 +82,11 @@ const OngoingExperiment: React.FC = () => {
   // Function to handle the "Generate Next Generation" button click
   const generateNextGeneration = async () => {
     setLoading(true); // Start loading
+    const requestData = {
+      population: experimentData?.population,
+      fitnessScores: experimentData?.fitnessScores,
+    };
+
     try {
       const response = await fetch(
         `https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments/ongoing?experimentId=${experimentId}`,
@@ -76,6 +96,7 @@ const OngoingExperiment: React.FC = () => {
             'Content-Type': 'application/json',
           },
           mode: 'cors',
+          body: JSON.stringify(requestData),
         }
       );
 
@@ -85,20 +106,23 @@ const OngoingExperiment: React.FC = () => {
 
       const responseData = await response.json();
       const updatedExperiment = JSON.parse(responseData.body);
-      console.log("Updated Experiment:", updatedExperiment.population);
+      console.log('Updated Experiment:', updatedExperiment);
 
       if (updatedExperiment) {
-        // Assuming the response contains a new population
         const experiment: Experiment = {
           ...experimentData!,
           population: updatedExperiment.population,
+          fitnessScores: updatedExperiment.fitnessScores || experimentData!.fitnessScores,
         };
 
-        setExperimentData(experiment); // Update the experiment data with the new population
+        setExperimentData(experiment);
         console.log('New population generated:', experiment.population);
+
+        setSnackbar({ open: true, message: 'Next generation generated successfully!', severity: 'success' });
       }
     } catch (error) {
       console.error('Error generating next generation:', error);
+      setSnackbar({ open: true, message: 'Failed to generate next generation.', severity: 'error' });
     } finally {
       setLoading(false); // Stop loading
     }
@@ -109,6 +133,10 @@ const OngoingExperiment: React.FC = () => {
     const updatedScores = [...(experimentData?.fitnessScores || [])];
     updatedScores[memberIndex] = parseFloat(e.target.value);
     setExperimentData({ ...experimentData!, fitnessScores: updatedScores });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   useEffect(() => {
@@ -133,18 +161,16 @@ const OngoingExperiment: React.FC = () => {
         Population Size: {experimentData.populationSize}
       </Typography>
 
-      {/* MUI Button with consistent styling */}
       <Button
         variant="contained"
         color="primary"
         onClick={generateNextGeneration}
-        disabled={loading} // Disable while loading
+        disabled={loading}
         sx={{ margin: '16px 0' }}
       >
-        {loading ? <CircularProgress size={24} /> : 'Generate Next Generation'}
+        {loading ? <CircularProgress size={24} /> : 'Generate Next Generation and Submit Fitness Scores'}
       </Button>
 
-      {/* Show population table if there are members in the population */}
       {experimentData.population && experimentData.population.length > 0 ? (
         <>
           <Typography variant="h5" gutterBottom>
@@ -174,7 +200,7 @@ const OngoingExperiment: React.FC = () => {
                       <TextField
                         type="number"
                         value={experimentData.fitnessScores?.[memberIndex] || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFitnessScoreChange(e, memberIndex)} // Explicitly typing the event
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFitnessScoreChange(e, memberIndex)}
                         size="small"
                         variant="outlined"
                         sx={{ width: '70px' }}
@@ -189,6 +215,17 @@ const OngoingExperiment: React.FC = () => {
       ) : (
         <div>No population generated yet.</div>
       )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
