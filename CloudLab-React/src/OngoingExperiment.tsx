@@ -30,7 +30,7 @@ interface Experiment {
   experimentId: string;
   userId: string;
   population?: number[][]; // Population is now a 2D array of numbers (as per your description)
-  fitnessScores?: number[]; // New state for fitness scores
+  fitnessScores?: (number | null)[]; // Allow null values
 }
 
 const OngoingExperiment: React.FC = () => {
@@ -69,8 +69,9 @@ const OngoingExperiment: React.FC = () => {
         const experiment: Experiment = parsedBody.experiment;
         console.log('Experiment data:', experiment);
 
-        const initialFitnessScores = experiment.population?.map(() => 0) || [];
+        const initialFitnessScores = experiment.population?.map(() => null) || [];
         setExperimentData({ ...experiment, fitnessScores: initialFitnessScores });
+
       } else {
         console.error('Invalid response structure:', parsedBody);
       }
@@ -81,12 +82,24 @@ const OngoingExperiment: React.FC = () => {
 
   // Function to handle the "Generate Next Generation" button click
   const generateNextGeneration = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
+  
+    // Validate fitness scores
+    if (experimentData?.fitnessScores?.some((score) => score === null)) {
+      setSnackbar({
+        open: true,
+        message: 'Please fill out all fitness scores before submitting.',
+        severity: 'error',
+      });
+      setLoading(false);
+      return;
+    }
+  
     const requestData = {
       population: experimentData?.population,
-      fitnessScores: experimentData?.fitnessScores,
+      fitnessScores: experimentData?.fitnessScores?.map((score) => score ?? 0), // Default to 0 if null (if required)
     };
-
+  
     try {
       const response = await fetch(
         `https://q3cyzs78u4.execute-api.us-east-1.amazonaws.com/dev/experiments/ongoing?experimentId=${experimentId}`,
@@ -99,41 +112,41 @@ const OngoingExperiment: React.FC = () => {
           body: JSON.stringify(requestData),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error('Failed to generate next generation');
       }
-
+  
       const responseData = await response.json();
       const updatedExperiment = JSON.parse(responseData.body);
-      console.log('Updated Experiment:', updatedExperiment);
-
+  
       if (updatedExperiment) {
         const experiment: Experiment = {
           ...experimentData!,
           population: updatedExperiment.population,
           fitnessScores: updatedExperiment.fitnessScores || experimentData!.fitnessScores,
         };
-
+  
         setExperimentData(experiment);
-        console.log('New population generated:', experiment.population);
-
         setSnackbar({ open: true, message: 'Next generation generated successfully!', severity: 'success' });
       }
     } catch (error) {
       console.error('Error generating next generation:', error);
       setSnackbar({ open: true, message: 'Failed to generate next generation.', severity: 'error' });
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
+  
 
   // Function to handle fitness score change
   const handleFitnessScoreChange = (e: React.ChangeEvent<HTMLInputElement>, memberIndex: number) => {
     const updatedScores = [...(experimentData?.fitnessScores || [])];
-    updatedScores[memberIndex] = parseFloat(e.target.value);
+    const inputValue = e.target.value;
+    updatedScores[memberIndex] = inputValue === '' ? null : parseFloat(inputValue);
     setExperimentData({ ...experimentData!, fitnessScores: updatedScores });
   };
+  
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
