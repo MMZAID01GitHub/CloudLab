@@ -8,6 +8,13 @@
       "serviceType": "imported"
     }
   },
+  "hosting": {
+    "amplifyhosting": {
+      "lastPushTimeStamp": "2024-11-16T02:23:01.393Z",
+      "service": "amplifyhosting",
+      "type": "cicd"
+    }
+  },
   "parameters": {
     "AMPLIFY_auth_cloudlabreactee5c92e5_nativeClientId": {
       "usedBy": [
@@ -38,6 +45,22 @@
         {
           "category": "auth",
           "resourceName": "cloudlabreactee5c92e5"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
         }
       ]
     }
