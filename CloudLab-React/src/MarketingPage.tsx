@@ -23,7 +23,7 @@ const MarketingPage = () => {
       </Typography>
       <Typography variant="body1" sx={{ marginTop: '0.5rem', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
         CloudLab takes the complexity out of setting up and running experiments. By integrating cutting-edge optimization
-        techniques like DE, it helps researchers find the best configurations with fewer trials, saving time and resources.
+        techniques like DE, it enables researchers to find the best configurations with fewer trials, saving time and resources.
         Whether you're experimenting in biology, chemistry, or any field, CloudLab streamlines the process and delivers
         high-quality results.
       </Typography>
