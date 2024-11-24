@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, MenuItem, Grid2, SelectChangeEvent, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Typography, Box, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert, SelectChangeEvent } from '@mui/material';
+import { Link } from 'react-router-dom';
 import Variables from './Variables';
 import { getCurrentUser } from 'aws-amplify/auth';
 
@@ -17,13 +18,14 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [isSaved, setIsSaved] = useState(false);
 
   const addVariable = () => {
     setVariables([...variables, { name: '', min: '', max: '', type: 'continuous', customValues: [] }]);
   };
 
   const handleGoalChange = (event: SelectChangeEvent<string>) => {
-    setGoal(event.target.value as string);
+    setGoal(event.target.value);
   };
 
   const handleSubmit = async () => {
@@ -55,6 +57,7 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
       setSnackbarMessage('Experiment saved successfully!');
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
+      setIsSaved(true); // Mark as saved
     } catch (error) {
       console.error('Error saving experiment:', error);
 
@@ -71,69 +74,55 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
         {experimentName || "New Experiment"}
       </Typography>
 
-      <Grid2 container spacing={2} sx={{ mb: 2 }}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <TextField
-            label="Experiment Name"
-            value={experimentName}
-            onChange={(e) => onExperimentNameChange(e.target.value)}
-            fullWidth
-            margin="normal"
-            sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-          />
-        </Grid2>
+      <TextField
+        label="Experiment Name"
+        value={experimentName}
+        onChange={(e) => onExperimentNameChange(e.target.value)}
+        fullWidth
+        margin="normal"
+        sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+      />
 
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth margin="normal">
-            <InputLabel sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>Goal</InputLabel>
-            <Select value={goal} onChange={handleGoalChange}>
-              <MenuItem value="minimize">Minimize</MenuItem>
-              <MenuItem value="maximize">Maximize</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid2>
-      </Grid2>
+      <FormControl fullWidth margin="normal">
+        <InputLabel sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>Goal</InputLabel>
+        <Select value={goal} onChange={handleGoalChange}>
+          <MenuItem value="minimize">Minimize</MenuItem>
+          <MenuItem value="maximize">Maximize</MenuItem>
+        </Select>
+      </FormControl>
 
-      <Grid2 container spacing={2} sx={{ mb: 2 }}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <TextField
-            label="Population Size"
-            type="number"
-            value={populationSize}
-            onChange={(e) => setPopulationSize(Number(e.target.value))}
-            fullWidth
-            margin="normal"
-            sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-          />
-        </Grid2>
-      </Grid2>
+      <TextField
+        label="Population Size"
+        type="number"
+        value={populationSize}
+        onChange={(e) => setPopulationSize(Number(e.target.value))}
+        fullWidth
+        margin="normal"
+        sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+      />
 
       <Variables variables={variables} setVariables={setVariables} />
 
-      <Grid2 container spacing={2} sx={{ mt: 2 }}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={addVariable}
-            sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-          >
-            Add Variable
-          </Button>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            fullWidth
-            onClick={handleSubmit}
-            sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-          >
-            Save Experiment
-          </Button>
-        </Grid2>
-      </Grid2>
+      <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={addVariable}
+          sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+        >
+          Add Variable
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={handleSubmit}
+          sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+        >
+          Save Experiment
+        </Button>
+      </Box>
 
       {/* Snackbar for feedback */}
       <Snackbar
@@ -145,6 +134,21 @@ const ExperimentForm: React.FC<ExperimentFormProps> = ({ experimentName, onExper
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Navigation button after saving */}
+      {isSaved && (
+        <Box sx={{ mt: 3 }}>
+          <Button
+            component={Link}
+            to="/experiments"
+            variant="contained"
+            color="primary"
+            sx={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+          >
+            View My Experiments
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };
